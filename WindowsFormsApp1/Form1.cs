@@ -256,17 +256,32 @@ namespace WindowsFormsApp1
 
         private void button1_Click(object sender, EventArgs e) //start liczenia
         {
-            double[,] macierz = stworzMacierz(); //
+            double[,] macierz = stworzMacierz();
 
+            double[] wyniki = RozwiazRownanie(macierz);
+
+            //wypisywanie wyników
+            Wynik_x3_TB.Text = String.Format("{0:0.##}", wyniki[6]);
+            Wynik_x3_TB.Text = String.Format("{0:0.##}", wyniki[5]);
+            Wynik_x3_TB.Text = String.Format("{0:0.##}", wyniki[4]);
+            Wynik_x3_TB.Text = String.Format("{0:0.##}", wyniki[3]);
+            Wynik_x2_TB.Text = String.Format("{0:0.##}", wyniki[2]);
+            Wynik_x1_TB.Text = String.Format("{0:0.##}", wyniki[1]);
+
+
+        }
+
+        private static double[] RozwiazRownanie(double[,] macierz)
+        {
             double m;
-            for (int k = 1; k < macierz.GetLength(1); k++)
+            for (int k = 1; k < macierz.GetLength(1); k++) //redukowanie do 0 pod przekatna
             {
                 for (int i = k; i < macierz.GetLength(0); i++)
                 {
-                    m = macierz[i, k] / macierz[k-1, k];
+                    m = macierz[i, k] / macierz[k - 1, k];
                     for (int j = 0; j < macierz.GetLength(1); j++)
                     {
-                        macierz[i, j] -= m * macierz[k-1, j];
+                        macierz[i, j] -= m * macierz[k - 1, j];
                     }
                 }
             }
@@ -274,26 +289,19 @@ namespace WindowsFormsApp1
             double[] wyniki = new double[7];
 
 
-            for (int i = macierz.GetLength(0)-1; i>=0; i--)
+            for (int i = macierz.GetLength(0) - 1; i >= 0; i--) //obliczanie kolejnych x od konca
             {
-                wyniki[i + 1] = macierz[i, 0] / macierz[i, i+1];
-                for (int j = i+2; j<macierz.GetLength(1); j++)
+                wyniki[i + 1] = macierz[i, 0] / macierz[i, i + 1];
+                for (int j = i + 2; j < macierz.GetLength(1); j++)
                 {
-                    wyniki[i + 1] -= macierz[i, j] * wyniki[j] / macierz[i, i+1];
+                    wyniki[i + 1] -= macierz[i, j] * wyniki[j] / macierz[i, i + 1];
                 }
             }
 
-            Wynik_x3_TB.Text = String.Format("{0:0.##}", wyniki[6]);
-            Wynik_x3_TB.Text = String.Format("{0:0.##}", wyniki[5]);
-            Wynik_x3_TB.Text = String.Format("{0:0.##}", wyniki[4]);
-            Wynik_x3_TB.Text = String.Format("{0:0.##}", wyniki[3]);
-            Wynik_x2_TB.Text = String.Format("{0:0.##}", wyniki[2]);
-            Wynik_x1_TB.Text = String.Format("{0:0.##}", wyniki[1]);
-            
-
+            return wyniki;
         }
 
-        private double[,] stworzMacierz()
+        private double[,] stworzMacierz() //czytanie danych i tworzenie macierza pierwsza kolumna to wyraz wolny potem kolejne x. a11 w macierzu znajduje sie w [0,1] wyraz wolny tego rownania w [0,0], a35 w [2,5] wyraz wolny w [2,0];
         {
             string[,] tablicaStr = new string[6, 7];
             #region przypisywanieSTR
