@@ -23,7 +23,7 @@ namespace WindowsFormsApp1
             wolny1_TB.Enabled = true;
             wolny2_TB.Enabled = true;
         }
-
+        #region RadioButtony
         private void radioButton2x2_CheckedChanged(object sender, EventArgs e)
         {
             x11_TB.Enabled = true;
@@ -253,10 +253,21 @@ namespace WindowsFormsApp1
             wolny5_TB.Enabled = true;
             wolny6_TB.Enabled = true;
         }
-
+        #endregion
         private void button1_Click(object sender, EventArgs e) //start liczenia
         {
             double[,] macierz = stworzMacierz();
+
+            while(!sprawdzMacierz(macierz))
+            {
+                for (int i = 0; i < macierz.GetLength(0); i++)
+                {
+                    if (macierz[i, i + 1] == 0)
+                    {
+                        zamienWiersz(i, macierz);
+                    }
+                }
+            }
 
             double[] wyniki = RozwiazRownanie(macierz);
 
@@ -269,6 +280,36 @@ namespace WindowsFormsApp1
             Wynik_x1_TB.Text = String.Format("{0:0.##}", wyniki[1]);
 
 
+        }
+
+        private void zamienWiersz(int index, double[,] macierz)
+        {
+            Random rand = new Random();
+            for(int i=0; i<macierz.GetLength(0); i++)
+            {
+                int los = rand.Next(0,macierz.GetLength(0));
+                if(macierz[los, index+1] != 0 && macierz[los, los+1] != 0)
+                {
+                    for (int j = 0; j < macierz.GetLength(0); j++)
+                    {
+                        double bufor = macierz[index, j];
+                        macierz[index, j] = macierz[los, j];
+                        macierz[los, j] = bufor;
+                    }
+                }
+            }
+        }
+
+        private bool sprawdzMacierz(double[,] macierz)
+        {
+            for (int i = 0; i < macierz.GetLength(0); i++)
+            {
+                if (macierz[i, i + 1] == 0)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         private static double[] RozwiazRownanie(double[,] macierz)
@@ -386,6 +427,8 @@ namespace WindowsFormsApp1
                     tablicaDouble[i, j] = double.Parse(tablicaStr[i, j]);
                 }
             }
+
+            
 
             
             return tablicaDouble;
